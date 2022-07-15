@@ -48,11 +48,15 @@ func (c *ClusterRoundTripper) RoundTrip(req *http.Request) (*http.Response, erro
 
 // apiRegex matches any string that has /api/ or /apis/ in it.
 var apiRegex = regexp.MustCompile(`(/api/|/apis/)`)
+var clustersRegex = regexp.MustCompile(`(/clusters/)(.+[:.+]*(/api/|/apis/))`)
 
 // generatePath formats the request path to target the specified cluster
 func generatePath(originalPath string, cluster logicalcluster.Name) string {
 	// If the originalPath has /api/ or /apis/ in it, it might be anywhere in the path, so we use a regex to find and
 	// replaces /api/ or /apis/ with $cluster/api/ or $cluster/apis/
+	if clustersRegex.MatchString(originalPath) {
+		return clustersRegex.ReplaceAllString(originalPath, fmt.Sprintf("%s$3", cluster.Path()))
+	}
 	if apiRegex.MatchString(originalPath) {
 		return apiRegex.ReplaceAllString(originalPath, fmt.Sprintf("%s$1", cluster.Path()))
 	}

@@ -70,6 +70,10 @@ func TestRoundTripper_generatePath(t *testing.T) {
 			originalPath: "/services/apiexport/root:default:pub/some-export/api/v1/configmaps",
 			desired:      "/services/apiexport/root:default:pub/some-export/clusters/root:org:ws/api/v1/configmaps",
 		},
+		"/clusters/root:orgz/apis/example.io": {
+			originalPath: "/clusters/root:orgz/apis/example.io",
+			desired:      "/clusters/root:org:ws/apis/example.io",
+		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
